@@ -18,11 +18,17 @@ export type OpenClawRun = {
   toolCallId: string;
   timestamp: number;
 
+  // toolCall arguments
   label?: string;
   task?: string;
   agentId?: string;
   model?: string;
   mode?: string;
+
+  // toolResult data
+  success?: boolean;
+  childSessionKey?: string;
+  runId?: string;
 };
 
 function toMs(ts: unknown): number {
@@ -92,7 +98,7 @@ export async function getOpenClawRuns({
   const sessions = await getOpenClawSessions();
   const chosen = sessions.slice(0, sessionLimit);
 
-  const runs: OpenClawRun[] = [];
+  const runsByKey = new Map<string, OpenClawRun>();
 
   for (const s of chosen) {
     const jsonlPath = path.join(sessionsDir(), `${s.sessionId}.jsonl`);
@@ -129,34 +135,74 @@ export async function getOpenClawRuns({
         if (!item || typeof item !== "object") continue;
         const itemRec = item as Record<string, unknown>;
 
-        if (itemRec["type"] !== "toolCall") continue;
-        if (itemRec["name"] !== "sessions_spawn") continue;
-
-        const argsVal = itemRec["arguments"];
-        const args =
-          argsVal && typeof argsVal === "object"
-            ? (argsVal as Record<string, unknown>)
-            : ({} as Record<string, unknown>);
+        const type = itemRec["type"];
+        const name = itemRec["name"];
+        if (name !== "sessions_spawn") continue;
+        if (type !== "toolCall" && type !== "toolResult") continue;
 
         const toolCallId = String(itemRec["id"] ?? "") || "unknown";
+        const runKey = `${s.sessionId}:${toolCallId}`;
 
-        runs.push({
-          runKey: `${s.sessionId}:${toolCallId}`,
+        const existing: OpenClawRun = runsByKey.get(runKey) ?? {
+          runKey,
           sessionKey: s.sessionKey,
           sessionId: s.sessionId,
           toolCallId,
           timestamp: ts,
-          label: typeof args["label"] === "string" ? (args["label"] as string) : undefined,
-          task: typeof args["task"] === "string" ? (args["task"] as string) : undefined,
-          agentId:
-            typeof args["agentId"] === "string" ? (args["agentId"] as string) : undefined,
-          model: typeof args["model"] === "string" ? (args["model"] as string) : undefined,
-          mode: typeof args["mode"] === "string" ? (args["mode"] as string) : undefined,
-        });
+        };
+
+        if (ts && (!existing.timestamp || ts < existing.timestamp)) {
+          existing.timestamp = ts;
+        }
+
+        if (type === "toolCall") {
+          const argsVal = itemRec["arguments"];
+          const args =
+            argsVal && typeof argsVal === "object"
+              ? (argsVal as Record<string, unknown>)
+              : ({} as Record<string, unknown>);
+
+          existing.label =
+            typeof args["label"] === "string" ? (args["label"] as string) : existing.label;
+          existing.task =
+            typeof args["task"] === "string" ? (args["task"] as string) : existing.task;
+          existing.agentId =
+            typeof args["agentId"] === "string"
+              ? (args["agentId"] as string)
+              : existing.agentId;
+          existing.model =
+            typeof args["model"] === "string" ? (args["model"] as string) : existing.model;
+          existing.mode =
+            typeof args["mode"] === "string" ? (args["mode"] as string) : existing.mode;
+        }
+
+        if (type === "toolResult") {
+          const resultVal = itemRec["result"];
+          if (resultVal && typeof resultVal === "object") {
+            const resultRec = resultVal as Record<string, unknown>;
+            if (typeof resultRec["success"] === "boolean") {
+              existing.success = resultRec["success"] as boolean;
+            }
+
+            const dataVal = resultRec["data"];
+            if (dataVal && typeof dataVal === "object") {
+              const dataRec = dataVal as Record<string, unknown>;
+              if (typeof dataRec["childSessionKey"] === "string") {
+                existing.childSessionKey = dataRec["childSessionKey"] as string;
+              }
+              if (typeof dataRec["runId"] === "string") {
+                existing.runId = dataRec["runId"] as string;
+              }
+            }
+          }
+        }
+
+        runsByKey.set(runKey, existing);
       }
     }
   }
 
+  const runs = Array.from(runsByKey.values());
   runs.sort((a, b) => b.timestamp - a.timestamp);
   return runs.slice(0, limit);
 }

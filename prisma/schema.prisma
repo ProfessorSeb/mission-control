@@ -44,3 +44,19 @@ model Task {
   @@index([status, priority])
   @@index([updatedAt])
 }
+
+model EmailWatch {
+  id      String  @id @default(cuid())
+  name    String
+  query   String
+  enabled Boolean @default(true)
+
+  // Practical guardrail to avoid hammering Gmail.
+  maxResults Int @default(10)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([enabled])
+  @@index([updatedAt])
+}

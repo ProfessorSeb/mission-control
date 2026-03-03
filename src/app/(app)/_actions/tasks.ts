@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { TaskPriority, TaskStatus } from "@/generated/prisma/client";
+import { TaskPriority, TaskStatus } from "@/generated/prisma";
 import { prisma } from "@/lib/db";
 
 function parseStatus(value: FormDataEntryValue | null): TaskStatus {
@@ -116,5 +116,44 @@ export async function createTaskFromRun(formData: FormData) {
 
   revalidatePath("/board");
   revalidatePath("/runs");
+  redirect("/board");
+}
+
+export async function createTaskFromEmail(formData: FormData) {
+  const threadId = String(formData.get("threadId") ?? "").trim();
+  const from = String(formData.get("from") ?? "").trim();
+  const subject = String(formData.get("subject") ?? "").trim();
+  const date = String(formData.get("date") ?? "").trim();
+
+  if (!threadId) throw new Error("threadId is required");
+
+  const runKey = `gmail:${threadId}`;
+  const title = subject ? `Email: ${subject}` : "Email";
+  const descriptionLines = [
+    "Imported from Gmail.",
+    from ? `From: ${from}` : "",
+    date ? `Date: ${date}` : "",
+    `Thread: ${threadId}`,
+  ].filter(Boolean);
+
+  await prisma.task.upsert({
+    where: { runKey },
+    update: {
+      title,
+      description: descriptionLines.join("\n"),
+      source: "gmail",
+    },
+    create: {
+      title,
+      description: descriptionLines.join("\n"),
+      status: TaskStatus.INBOX,
+      priority: TaskPriority.P2,
+      source: "gmail",
+      runKey,
+    },
+  });
+
+  revalidatePath("/board");
+  revalidatePath("/mail");
   redirect("/board");
 }

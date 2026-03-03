@@ -12,6 +12,7 @@ Built with **Next.js App Router + Tailwind + Prisma (SQLite)**.
 - `/board` — Task Board (Inbox / Doing / Waiting / Blocked / Done)
 - `/runs` — parses OpenClaw session JSONL logs and finds `sessions_spawn` tool calls
 - `/sessions` — reads OpenClaw `sessions.json`
+- `/mail` — Gmail watch rules (via `gog gmail search`) + one-click “create task”
 
 ## Setup
 
@@ -52,6 +53,13 @@ Override with:
 ```bash
 export OPENCLAW_HOME=/path/to/.openclaw
 ```
+
+### Gmail (optional)
+
+The `/mail` page shells out to the local `gog` CLI.
+
+- Ensure `gog login you@company.com` has been run on this machine.
+- Optionally set `GOG_ACCOUNT` in `.env`.
 
 ## Notes / security
 

@@ -19,6 +19,7 @@ export default function AppLayout({
 
         <nav className="flex flex-col gap-1">
           <NavLink href="/board" label="Board" />
+          <NavLink href="/mail" label="Mail" />
           <NavLink href="/runs" label="Runs" />
           <NavLink href="/sessions" label="Sessions" />
           <NavLink href="/tools" label="Tools" />

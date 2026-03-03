@@ -1,4 +1,4 @@
-import { TaskPriority, TaskStatus } from "@/generated/prisma/client";
+import { TaskPriority, TaskStatus } from "@/generated/prisma";
 
 export const TASK_STATUSES: Array<{ key: TaskStatus; label: string }> = [
   { key: TaskStatus.INBOX, label: "Inbox" },
