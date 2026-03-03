@@ -23,6 +23,8 @@ export default function AppLayout({
         <nav className="flex flex-col gap-1">
           <NavLink href="/board" label="Board" />
           <NavLink href="/tasks" label="Tasks" />
+          <NavLink href="/notes" label="Notes" />
+          <NavLink href="/sketches" label="Sketches" />
           <NavLink href="/mail" label="Mail" />
           <NavLink href="/g-tasks" label="Google Tasks" />
           <NavLink href="/runs" label="Runs" />

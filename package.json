@@ -13,14 +13,18 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@excalidraw/excalidraw": "^0.18.0",
     "@prisma/adapter-better-sqlite3": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "@radix-ui/react-dialog": "^1.1.15",
     "cmdk": "^1.1.1",
+    "gray-matter": "^4.0.3",
     "next": "16.1.6",
     "prisma": "^7.4.2",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

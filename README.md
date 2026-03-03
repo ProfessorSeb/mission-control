@@ -7,15 +7,17 @@ Personal **Mission Control** for tracking work across:
 
 Built with **Next.js App Router + Tailwind + Prisma (SQLite)**.
 
-## What’s in here
+## What's in here
 
-- `/board` — Task Board (Inbox / Doing / Waiting / Blocked / Done)
-- `/tasks` — Tasks list view (Linear-ish)
+- `/board` - Task Board (Inbox / Doing / Waiting / Blocked / Done)
+- `/tasks` - Tasks list view (Linear-ish)
+- `/notes` — Markdown notes stored in the vault (Notion-ish, but files)
+- `/sketches` — Excalidraw sketches stored in the vault
 - `/mail` — Gmail watch rules (via `gog gmail search`) + one-click “create task”
 - `/g-tasks` — Google Tasks (via `gog tasks`) + import to board
 - Task detail page — push a Mission Control task into Google Tasks
-- `/runs` — parses OpenClaw session JSONL logs and finds `sessions_spawn` tool calls
-- `/sessions` — reads OpenClaw `sessions.json`
+- `/runs` - parses OpenClaw session JSONL logs and finds `sessions_spawn` tool calls
+- `/sessions` - reads OpenClaw `sessions.json`
 
 ## Setup
 
@@ -30,9 +32,9 @@ Open: http://localhost:3000 (redirects to `/board`).
 
 ## Keyboard shortcuts
 
-- `Cmd/Ctrl + K` — command palette
-- `C` — new task
-- `G` then `B/T/M/G/R/S` — go to Board / Tasks / Mail / Google Tasks / Runs / Sessions
+- `Cmd/Ctrl + K` - command palette
+- `C` - new task
+- `G` then `B/T/N/D/M/G/R/S` - go to Board / Tasks / Notes / Sketches / Mail / Google Tasks / Runs / Sessions
 
 ### SQLite driver
 
@@ -48,6 +50,20 @@ Default `.env` uses SQLite:
 ```env
 DATABASE_URL="file:./dev.db"
 ```
+
+### Vault (notes + sketches)
+
+Notes and sketches are stored as files outside the repo in a vault directory.
+
+Set in `.env`:
+
+```env
+MISSION_CONTROL_VAULT_DIR="../../mission-control-vault"
+```
+
+The vault contains:
+- `notes/` (Markdown)
+- `sketches/` (Excalidraw JSON)
 
 ### OpenClaw log location
 
@@ -92,4 +108,4 @@ You can also create a Google Task directly from any Mission Control task on `/ta
 - Drag & drop between columns
 - Auto-sync task status from sub-agent completion events
 - ACP session ingestion (if/when ACP emits structured events)
-- “Tools” registry: build internal tools as pages with server actions
+- "Tools" registry: build internal tools as pages with server actions
