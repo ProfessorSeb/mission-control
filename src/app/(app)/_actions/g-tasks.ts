@@ -35,26 +35,97 @@ export async function addGoogleTask(formData: FormData) {
 export async function markGoogleTaskDone(formData: FormData) {
   const tasklistId = String(formData.get("tasklistId") ?? "").trim();
   const taskId = String(formData.get("taskId") ?? "").trim();
+  const missionControlTaskId = String(
+    formData.get("missionControlTaskId") ?? "",
+  ).trim();
 
   if (!tasklistId) throw new Error("tasklistId is required");
   if (!taskId) throw new Error("taskId is required");
 
   await tasksDone({ tasklistId, taskId });
 
+  const googleTaskKey = `gtasks:${tasklistId}:${taskId}`;
+
+  // Reverse sync: if this Google Task is linked to a Mission Control task, mark it DONE.
+  if (missionControlTaskId) {
+    await prisma.task.update({
+      where: { id: missionControlTaskId },
+      data: { status: "DONE" },
+    });
+  } else {
+    await prisma.task.updateMany({
+      where: {
+        OR: [
+          { googleTaskKey },
+          { runKey: googleTaskKey }, // legacy
+          {
+            AND: [
+              { googleTaskListId: tasklistId },
+              { googleTaskId: taskId },
+            ],
+          },
+        ],
+      },
+      data: { status: "DONE" },
+    });
+  }
+
+  revalidatePath("/board");
+  revalidatePath("/tasks");
   revalidatePath("/g-tasks");
+  if (missionControlTaskId) revalidatePath(`/tasks/${missionControlTaskId}`);
+
   redirect(safeReturnTo(formData, `/g-tasks?listId=${encodeURIComponent(tasklistId)}`));
 }
 
 export async function markGoogleTaskUndone(formData: FormData) {
   const tasklistId = String(formData.get("tasklistId") ?? "").trim();
   const taskId = String(formData.get("taskId") ?? "").trim();
+  const missionControlTaskId = String(
+    formData.get("missionControlTaskId") ?? "",
+  ).trim();
 
   if (!tasklistId) throw new Error("tasklistId is required");
   if (!taskId) throw new Error("taskId is required");
 
   await tasksUndo({ tasklistId, taskId });
 
+  const googleTaskKey = `gtasks:${tasklistId}:${taskId}`;
+
+  // Reverse sync: if linked, move MC task out of DONE.
+  // We only change tasks that are currently DONE to avoid surprising moves.
+  if (missionControlTaskId) {
+    const cur = await prisma.task.findUnique({ where: { id: missionControlTaskId } });
+    if (cur?.status === "DONE") {
+      await prisma.task.update({
+        where: { id: missionControlTaskId },
+        data: { status: "DOING" },
+      });
+    }
+  } else {
+    await prisma.task.updateMany({
+      where: {
+        status: "DONE",
+        OR: [
+          { googleTaskKey },
+          { runKey: googleTaskKey }, // legacy
+          {
+            AND: [
+              { googleTaskListId: tasklistId },
+              { googleTaskId: taskId },
+            ],
+          },
+        ],
+      },
+      data: { status: "DOING" },
+    });
+  }
+
+  revalidatePath("/board");
+  revalidatePath("/tasks");
   revalidatePath("/g-tasks");
+  if (missionControlTaskId) revalidatePath(`/tasks/${missionControlTaskId}`);
+
   redirect(safeReturnTo(formData, `/g-tasks?listId=${encodeURIComponent(tasklistId)}`));
 }
 

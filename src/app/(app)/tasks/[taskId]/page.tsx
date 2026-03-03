@@ -209,6 +209,11 @@ export default async function TaskDetailPage({
                       value={task.googleTaskListId}
                     />
                     <input type="hidden" name="taskId" value={task.googleTaskId} />
+                    <input
+                      type="hidden"
+                      name="missionControlTaskId"
+                      value={task.id}
+                    />
                     <input type="hidden" name="returnTo" value={returnTo} />
                     <button
                       type="submit"
@@ -225,6 +230,11 @@ export default async function TaskDetailPage({
                       value={task.googleTaskListId}
                     />
                     <input type="hidden" name="taskId" value={task.googleTaskId} />
+                    <input
+                      type="hidden"
+                      name="missionControlTaskId"
+                      value={task.id}
+                    />
                     <input type="hidden" name="returnTo" value={returnTo} />
                     <button
                       type="submit"
