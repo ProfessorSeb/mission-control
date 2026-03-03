@@ -178,7 +178,7 @@ export async function createTaskFromGoogleTask(formData: FormData) {
   if (!tasklistId) throw new Error("tasklistId is required");
   if (!taskId) throw new Error("taskId is required");
 
-  const runKey = `gtasks:${tasklistId}:${taskId}`;
+  const googleTaskKey = `gtasks:${tasklistId}:${taskId}`;
   const title = titleRaw ? `GTask: ${titleRaw}` : "GTask";
 
   const descriptionLines = [
@@ -190,22 +190,31 @@ export async function createTaskFromGoogleTask(formData: FormData) {
     `Task: ${taskId}`,
   ].filter(Boolean);
 
-  await prisma.task.upsert({
-    where: { runKey },
-    update: {
-      title,
-      description: descriptionLines.join("\n"),
-      source: "google_tasks",
-    },
-    create: {
-      title,
-      description: descriptionLines.join("\n"),
-      status: TaskStatus.INBOX,
-      priority: TaskPriority.P2,
-      source: "google_tasks",
-      runKey,
-    },
-  });
+  const data = {
+    title,
+    description: descriptionLines.join("\n"),
+    source: "google_tasks",
+    googleTaskKey,
+    googleTaskListId: tasklistId,
+    googleTaskId: taskId,
+    googleTaskWebViewLink: webViewLink || null,
+  };
+
+  // Backwards compatibility: older versions stored gtasks linkage in runKey.
+  const legacy = await prisma.task.findFirst({ where: { runKey: googleTaskKey } });
+  if (legacy && !legacy.googleTaskKey) {
+    await prisma.task.update({ where: { id: legacy.id }, data });
+  } else {
+    await prisma.task.upsert({
+      where: { googleTaskKey },
+      update: data,
+      create: {
+        ...data,
+        status: TaskStatus.INBOX,
+        priority: TaskPriority.P2,
+      },
+    });
+  }
 
   revalidatePath("/board");
   revalidatePath("/g-tasks");

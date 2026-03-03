@@ -54,20 +54,27 @@ export default async function GoogleTasksPage({
     activeListId ? `listId=${encodeURIComponent(activeListId)}` : "";
   const returnTo = `/g-tasks${baseQuery ? `?${baseQuery}${showCompleted ? "&showCompleted=1" : ""}` : ""}`;
 
-  const runKeys =
+  const googleTaskKeys =
     activeListId && tasks.length > 0
       ? tasks.map((t) => `gtasks:${activeListId}:${t.id}`)
       : [];
 
   const existing =
-    runKeys.length > 0
+    googleTaskKeys.length > 0
       ? await prisma.task.findMany({
-          where: { runKey: { in: runKeys } },
-          select: { runKey: true },
+          where: {
+            OR: [
+              { googleTaskKey: { in: googleTaskKeys } },
+              { runKey: { in: googleTaskKeys } },
+            ],
+          },
+          select: { googleTaskKey: true, runKey: true },
         })
       : [];
 
-  const existingSet = new Set(existing.map((t) => t.runKey).filter(Boolean));
+  const existingSet = new Set(
+    existing.flatMap((t) => [t.googleTaskKey, t.runKey].filter(Boolean)),
+  );
 
   return (
     <div className="space-y-8">

@@ -36,7 +36,13 @@ model Task {
 
   // Metadata / integrations
   source String?
-  runKey  String? @unique
+
+  // Linkage keys for external systems (unique where present)
+  runKey         String? @unique
+  googleTaskKey  String? @unique
+  googleTaskListId String?
+  googleTaskId     String?
+  googleTaskWebViewLink String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

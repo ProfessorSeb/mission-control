@@ -13,6 +13,7 @@ Built with **Next.js App Router + Tailwind + Prisma (SQLite)**.
 - `/tasks` — Tasks list view (Linear-ish)
 - `/mail` — Gmail watch rules (via `gog gmail search`) + one-click “create task”
 - `/g-tasks` — Google Tasks (via `gog tasks`) + import to board
+- Task detail page — push a Mission Control task into Google Tasks
 - `/runs` — parses OpenClaw session JSONL logs and finds `sessions_spawn` tool calls
 - `/sessions` — reads OpenClaw `sessions.json`
 
@@ -78,6 +79,8 @@ The `/g-tasks` page shells out to:
 - `gog tasks add/done/undo ...`
 
 Make sure your gog token includes the `tasks` service.
+
+You can also create a Google Task directly from any Mission Control task on `/tasks/:id`.
 
 ## Notes / security
 
