@@ -1,0 +1,46 @@
+// Prisma schema for Mission Control
+
+generator client {
+  provider = "prisma-client-js"
+  // Keep the client in-repo so it's easy to deploy without a separate build step.
+  output = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum TaskStatus {
+  INBOX
+  DOING
+  WAITING
+  BLOCKED
+  DONE
+}
+
+enum TaskPriority {
+  P0
+  P1
+  P2
+  P3
+}
+
+model Task {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+
+  status   TaskStatus   @default(INBOX)
+  priority TaskPriority @default(P2)
+  dueAt    DateTime?
+
+  // Metadata / integrations
+  source String?
+  runKey  String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, priority])
+  @@index([updatedAt])
+}
