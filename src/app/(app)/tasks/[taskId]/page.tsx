@@ -13,9 +13,14 @@ import { TASK_PRIORITIES, TASK_STATUSES } from "@/lib/task";
 
 export default async function TaskDetailPage({
   params,
+  searchParams,
 }: {
   params: { taskId: string };
+  searchParams: Promise<{ gsync?: string }>;
 }) {
+  const sp = await searchParams;
+  const gsyncFailed = sp.gsync === "failed";
+
   const task = await prisma.task.findUnique({ where: { id: params.taskId } });
   if (!task) notFound();
 
@@ -38,6 +43,11 @@ export default async function TaskDetailPage({
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6">
+      {gsyncFailed ? (
+        <div className="rounded-md border border-amber-900/60 bg-amber-950/20 px-4 py-3 text-sm text-amber-200">
+          Google Tasks sync failed. Make sure <span className="font-mono">gog</span> is logged in with the <span className="font-mono">tasks</span> scope, then hit Save again.
+        </div>
+      ) : null}
       <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold text-zinc-100">Edit Task</h1>

@@ -214,6 +214,60 @@ export async function tasksAdd({
   };
 }
 
+export async function tasksUpdate({
+  tasklistId,
+  taskId,
+  title,
+  notes,
+  due,
+  status,
+  account,
+}: {
+  tasklistId: string;
+  taskId: string;
+  title: string;
+  notes: string;
+  due: string; // pass "" to clear
+  status: "needsAction" | "completed";
+  account?: string;
+}): Promise<GoogleTask> {
+  const acct = account ?? (await getDefaultGogAccountEmail());
+  if (!acct) throw new Error("No Google account configured for gog");
+
+  const args = [
+    "tasks",
+    "update",
+    tasklistId,
+    taskId,
+    "--title",
+    title,
+    "--notes",
+    notes,
+    "--due",
+    due,
+    "--status",
+    status,
+    "-a",
+    acct,
+    "-j",
+    "--results-only",
+    "--no-input",
+  ];
+
+  const r = await runGogJson<Record<string, unknown>>(args);
+  return {
+    id: String(r.id ?? taskId),
+    title: String(r.title ?? title),
+    status: String(r.status ?? status),
+    notes: typeof r.notes === "string" ? (r.notes as string) : undefined,
+    due: typeof r.due === "string" ? (r.due as string) : undefined,
+    updated: typeof r.updated === "string" ? (r.updated as string) : undefined,
+    completed: typeof r.completed === "string" ? (r.completed as string) : undefined,
+    webViewLink:
+      typeof r.webViewLink === "string" ? (r.webViewLink as string) : undefined,
+  };
+}
+
 export async function tasksDone({
   tasklistId,
   taskId,

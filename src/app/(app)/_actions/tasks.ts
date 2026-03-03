@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { TaskPriority, TaskStatus } from "@/generated/prisma";
 import { prisma } from "@/lib/db";
+import { tasksUpdate } from "@/lib/gog";
 
 function parseStatus(value: FormDataEntryValue | null): TaskStatus {
   const v = typeof value === "string" ? value : "";
@@ -63,7 +64,7 @@ export async function updateTask(taskId: string, formData: FormData) {
   const priority = parsePriority(formData.get("priority"));
   const dueAt = parseDueAt(formData.get("dueAt"));
 
-  await prisma.task.update({
+  const updated = await prisma.task.update({
     where: { id: taskId },
     data: {
       title,
@@ -73,6 +74,37 @@ export async function updateTask(taskId: string, formData: FormData) {
       dueAt,
     },
   });
+
+  // If this task is linked to Google Tasks, sync on save.
+  if (updated.googleTaskListId && updated.googleTaskId) {
+    const notesParts = [updated.description ?? ""].filter(Boolean);
+    notesParts.push("", "---", `Mission Control task: ${updated.id}`);
+    if (updated.source) notesParts.push(`source: ${updated.source}`);
+    if (updated.runKey) notesParts.push(`runKey: ${updated.runKey}`);
+
+    const notes = notesParts.join("\n").trim();
+
+    try {
+      const gt = await tasksUpdate({
+        tasklistId: updated.googleTaskListId,
+        taskId: updated.googleTaskId,
+        title: updated.title,
+        notes,
+        due: updated.dueAt ? updated.dueAt.toISOString() : "",
+        status: updated.status === TaskStatus.DONE ? "completed" : "needsAction",
+      });
+
+      if (gt.webViewLink && gt.webViewLink !== updated.googleTaskWebViewLink) {
+        await prisma.task.update({
+          where: { id: updated.id },
+          data: { googleTaskWebViewLink: gt.webViewLink },
+        });
+      }
+    } catch {
+      revalidatePath(`/tasks/${taskId}`);
+      redirect(`/tasks/${taskId}?gsync=failed`);
+    }
+  }
 
   revalidatePath("/board");
   revalidatePath(`/tasks/${taskId}`);
