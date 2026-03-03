@@ -75,6 +75,11 @@ export default async function RunsPage() {
                       : "spawn: ?"}
                     {r.runId ? ` · ${r.runId}` : ""}
                   </div>
+                  {r.childSessionKey ? (
+                    <div className="mt-1 truncate font-mono text-[11px] text-zinc-600">
+                      child: {r.childSessionKey}
+                    </div>
+                  ) : null}
                 </div>
 
                 <div className="col-span-1 flex justify-end">
@@ -91,6 +96,12 @@ export default async function RunsPage() {
                         value={r.label ?? "OpenClaw run"}
                       />
                       <input type="hidden" name="runTask" value={r.task ?? ""} />
+                      <input type="hidden" name="runId" value={r.runId ?? ""} />
+                      <input
+                        type="hidden"
+                        name="childSessionKey"
+                        value={r.childSessionKey ?? ""}
+                      />
                       <button
                         type="submit"
                         className="rounded-md border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs text-zinc-200 hover:bg-zinc-900"

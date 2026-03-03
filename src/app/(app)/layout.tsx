@@ -1,5 +1,8 @@
 import Link from "next/link";
 
+import { CommandButton } from "@/components/command-button";
+import { CommandPalette } from "@/components/command-palette";
+import { GlobalShortcuts } from "@/components/global-shortcuts";
 import { NavLink } from "@/components/nav-link";
 
 export default function AppLayout({
@@ -19,6 +22,7 @@ export default function AppLayout({
 
         <nav className="flex flex-col gap-1">
           <NavLink href="/board" label="Board" />
+          <NavLink href="/tasks" label="Tasks" />
           <NavLink href="/mail" label="Mail" />
           <NavLink href="/runs" label="Runs" />
           <NavLink href="/sessions" label="Sessions" />
@@ -42,6 +46,7 @@ export default function AppLayout({
           </form>
 
           <div className="flex items-center gap-2">
+            <CommandButton />
             <Link
               href="/tasks/new"
               className="rounded-md bg-zinc-100 px-3 py-2 text-sm font-medium text-zinc-950 hover:bg-white"
@@ -52,6 +57,8 @@ export default function AppLayout({
         </header>
 
         <main className="flex-1 min-w-0 px-6 py-6">{children}</main>
+        <GlobalShortcuts />
+        <CommandPalette />
       </div>
     </div>
   );

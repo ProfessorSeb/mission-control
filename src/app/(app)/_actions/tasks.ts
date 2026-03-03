@@ -89,13 +89,21 @@ export async function createTaskFromRun(formData: FormData) {
   const runKey = String(formData.get("runKey") ?? "").trim();
   const runLabel = String(formData.get("runLabel") ?? "").trim();
   const runTask = String(formData.get("runTask") ?? "").trim();
+  const runId = String(formData.get("runId") ?? "").trim();
+  const childSessionKey = String(formData.get("childSessionKey") ?? "").trim();
 
   if (!runKey) throw new Error("runKey is required");
 
   const title = runLabel || "OpenClaw run";
-  const description = runTask
-    ? `Imported from OpenClaw run.\n\nTask:\n${runTask}`
-    : "Imported from OpenClaw run.";
+
+  const descriptionLines = [
+    "Imported from OpenClaw run.",
+    runId ? `Run: ${runId}` : "",
+    childSessionKey ? `Child session: ${childSessionKey}` : "",
+    runTask ? `\nTask:\n${runTask}` : "",
+  ].filter(Boolean);
+
+  const description = descriptionLines.join("\n");
 
   await prisma.task.upsert({
     where: { runKey },

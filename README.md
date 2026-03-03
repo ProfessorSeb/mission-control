@@ -10,9 +10,10 @@ Built with **Next.js App Router + Tailwind + Prisma (SQLite)**.
 ## What’s in here
 
 - `/board` — Task Board (Inbox / Doing / Waiting / Blocked / Done)
+- `/tasks` — Tasks list view (Linear-ish)
+- `/mail` — Gmail watch rules (via `gog gmail search`) + one-click “create task”
 - `/runs` — parses OpenClaw session JSONL logs and finds `sessions_spawn` tool calls
 - `/sessions` — reads OpenClaw `sessions.json`
-- `/mail` — Gmail watch rules (via `gog gmail search`) + one-click “create task”
 
 ## Setup
 
@@ -24,6 +25,12 @@ npm run dev
 ```
 
 Open: http://localhost:3000 (redirects to `/board`).
+
+## Keyboard shortcuts
+
+- `Cmd/Ctrl + K` — command palette
+- `C` — new task
+- `G` then `B/T/M/R/S` — go to Board / Tasks / Mail / Runs / Sessions
 
 ### SQLite driver
 
