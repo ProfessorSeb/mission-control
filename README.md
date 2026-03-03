@@ -12,6 +12,7 @@ Built with **Next.js App Router + Tailwind + Prisma (SQLite)**.
 - `/board` — Task Board (Inbox / Doing / Waiting / Blocked / Done)
 - `/tasks` — Tasks list view (Linear-ish)
 - `/mail` — Gmail watch rules (via `gog gmail search`) + one-click “create task”
+- `/g-tasks` — Google Tasks (via `gog tasks`) + import to board
 - `/runs` — parses OpenClaw session JSONL logs and finds `sessions_spawn` tool calls
 - `/sessions` — reads OpenClaw `sessions.json`
 
@@ -30,7 +31,7 @@ Open: http://localhost:3000 (redirects to `/board`).
 
 - `Cmd/Ctrl + K` — command palette
 - `C` — new task
-- `G` then `B/T/M/R/S` — go to Board / Tasks / Mail / Runs / Sessions
+- `G` then `B/T/M/G/R/S` — go to Board / Tasks / Mail / Google Tasks / Runs / Sessions
 
 ### SQLite driver
 
@@ -67,6 +68,16 @@ The `/mail` page shells out to the local `gog` CLI.
 
 - Ensure `gog login you@company.com` has been run on this machine.
 - Optionally set `GOG_ACCOUNT` in `.env`.
+
+### Google Tasks (optional)
+
+The `/g-tasks` page shells out to:
+
+- `gog tasks lists list`
+- `gog tasks list <tasklistId>`
+- `gog tasks add/done/undo ...`
+
+Make sure your gog token includes the `tasks` service.
 
 ## Notes / security
 

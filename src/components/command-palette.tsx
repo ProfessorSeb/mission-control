@@ -134,6 +134,14 @@ export function CommandPalette() {
                   className="flex cursor-pointer items-center justify-between rounded-md px-2 py-2 text-sm text-zinc-200 aria-selected:bg-zinc-900"
                 >
                   <span>Mail</span>
+                  <span className="text-xs text-zinc-500">G M</span>
+                </Command.Item>
+                <Command.Item
+                  onSelect={() => closeAnd(() => router.push("/g-tasks"))}
+                  className="flex cursor-pointer items-center justify-between rounded-md px-2 py-2 text-sm text-zinc-200 aria-selected:bg-zinc-900"
+                >
+                  <span>Google Tasks</span>
+                  <span className="text-xs text-zinc-500">G G</span>
                 </Command.Item>
                 <Command.Item
                   onSelect={() => closeAnd(() => router.push("/runs"))}

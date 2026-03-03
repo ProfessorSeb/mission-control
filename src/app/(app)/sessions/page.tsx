@@ -1,5 +1,7 @@
 import { getOpenClawSessions } from "@/lib/openclaw";
 
+export const dynamic = "force-dynamic";
+
 export default async function SessionsPage() {
   const sessions = await getOpenClawSessions();
 

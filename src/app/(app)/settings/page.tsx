@@ -3,6 +3,8 @@ import path from "node:path";
 
 import { getOpenClawHome } from "@/lib/openclaw";
 
+export const dynamic = "force-dynamic";
+
 async function exists(p: string) {
   try {
     await fs.access(p);

@@ -2,6 +2,8 @@ import { createTaskFromRun } from "@/app/(app)/_actions/tasks";
 import { prisma } from "@/lib/db";
 import { getOpenClawRuns } from "@/lib/openclaw";
 
+export const dynamic = "force-dynamic";
+
 export default async function RunsPage() {
   const runs = await getOpenClawRuns({ limit: 100, sessionLimit: 15 });
 

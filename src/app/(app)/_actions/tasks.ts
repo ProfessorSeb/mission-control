@@ -165,3 +165,54 @@ export async function createTaskFromEmail(formData: FormData) {
   revalidatePath("/mail");
   redirect("/board");
 }
+
+export async function createTaskFromGoogleTask(formData: FormData) {
+  const tasklistId = String(formData.get("tasklistId") ?? "").trim();
+  const taskId = String(formData.get("taskId") ?? "").trim();
+  const titleRaw = String(formData.get("title") ?? "").trim();
+  const notes = String(formData.get("notes") ?? "").trim();
+  const due = String(formData.get("due") ?? "").trim();
+  const webViewLink = String(formData.get("webViewLink") ?? "").trim();
+  const returnTo = String(formData.get("returnTo") ?? "").trim();
+
+  if (!tasklistId) throw new Error("tasklistId is required");
+  if (!taskId) throw new Error("taskId is required");
+
+  const runKey = `gtasks:${tasklistId}:${taskId}`;
+  const title = titleRaw ? `GTask: ${titleRaw}` : "GTask";
+
+  const descriptionLines = [
+    "Imported from Google Tasks.",
+    due ? `Due: ${due}` : "",
+    webViewLink ? `Link: ${webViewLink}` : "",
+    notes ? `\nNotes:\n${notes}` : "",
+    `\nTasklist: ${tasklistId}`,
+    `Task: ${taskId}`,
+  ].filter(Boolean);
+
+  await prisma.task.upsert({
+    where: { runKey },
+    update: {
+      title,
+      description: descriptionLines.join("\n"),
+      source: "google_tasks",
+    },
+    create: {
+      title,
+      description: descriptionLines.join("\n"),
+      status: TaskStatus.INBOX,
+      priority: TaskPriority.P2,
+      source: "google_tasks",
+      runKey,
+    },
+  });
+
+  revalidatePath("/board");
+  revalidatePath("/g-tasks");
+
+  if (returnTo.startsWith("/")) {
+    redirect(returnTo);
+  }
+
+  redirect("/board");
+}

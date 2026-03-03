@@ -3,6 +3,8 @@ import { createTaskFromEmail } from "@/app/(app)/_actions/tasks";
 import { prisma } from "@/lib/db";
 import { gmailSearchThreads } from "@/lib/gog";
 
+export const dynamic = "force-dynamic";
+
 export default async function MailPage() {
   const watches = await prisma.emailWatch.findMany({
     orderBy: [{ updatedAt: "desc" }],

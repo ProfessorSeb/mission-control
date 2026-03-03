@@ -24,6 +24,7 @@ export default function AppLayout({
           <NavLink href="/board" label="Board" />
           <NavLink href="/tasks" label="Tasks" />
           <NavLink href="/mail" label="Mail" />
+          <NavLink href="/g-tasks" label="Google Tasks" />
           <NavLink href="/runs" label="Runs" />
           <NavLink href="/sessions" label="Sessions" />
           <NavLink href="/tools" label="Tools" />

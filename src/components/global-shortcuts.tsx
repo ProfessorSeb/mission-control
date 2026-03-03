@@ -52,6 +52,7 @@ export function GlobalShortcuts() {
         if (key === "b") return router.push("/board");
         if (key === "t") return router.push("/tasks");
         if (key === "m") return router.push("/mail");
+        if (key === "g") return router.push("/g-tasks");
         if (key === "r") return router.push("/runs");
         if (key === "s") return router.push("/sessions");
       }
