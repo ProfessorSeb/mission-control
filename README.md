@@ -119,7 +119,8 @@ You can also create a Google Task directly from any Mission Control task on `/ta
 
 ## Notes / security
 
-- This MVP has **no auth**. Run it locally or behind your own access controls.
+- This MVP can be protected with an **auth gate** (HTTP Basic Auth via `middleware.ts`).
+  - Set `MC_AUTH_PASSWORD` (and optionally `MC_AUTH_USER`) in `.env`.
 - OpenClaw session logs may contain sensitive data. Treat this app as a privileged internal tool.
 
 ## Roadmap ideas
