@@ -28,6 +28,25 @@ npm run db:migrate
 npm run dev
 ```
 
+## Docker
+
+This app runs well in Docker, but it needs **volume mounts** for:
+- the sqlite DB (optional but recommended)
+- OpenClaw home (to read sessions/runs)
+- the vault directory (notes + sketches)
+
+### Docker Compose (recommended)
+
+From the repo root:
+
+```bash
+docker compose up --build
+```
+
+Then open: http://localhost:3010
+
+Edit `docker-compose.yml` if your vault/OpenClaw paths differ.
+
 Open: http://localhost:3000 (redirects to `/board`).
 
 ## Keyboard shortcuts

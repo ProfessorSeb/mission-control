@@ -1,0 +1,19 @@
+node_modules
+.next
+npm-debug.log
+yarn.lock
+pnpm-lock.yaml
+
+# local env / secrets
+.env
+.env.*
+
+# sqlite
+*.db
+*.db-journal
+
+# git
+.git
+
+# misc
+.DS_Store

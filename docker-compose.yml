@@ -1,0 +1,37 @@
+services:
+  mission-control:
+    build: .
+    ports:
+      - "3010:3010"
+    environment:
+      PORT: "3010"
+      NODE_ENV: "production"
+
+      # Persist sqlite in a volume
+      DATABASE_URL: "file:/data/mission-control.db"
+
+      # File-backed vault + OpenClaw logs (mounted below)
+      MISSION_CONTROL_VAULT_DIR: "/vault"
+      OPENCLAW_HOME: "/openclaw"
+
+      # Optional: for gog-based Gmail/Google Tasks features
+      # GOG_ACCOUNT: "you@company.com"
+
+    volumes:
+      - mc-data:/data
+
+      # Vault lives outside the repo (default Sebby layout)
+      # repo: <workspace>/repos/mission-control
+      # vault: <workspace>/mission-control-vault
+      - ../../mission-control-vault:/vault
+
+      # OpenClaw home (read-only is fine for the runs/sessions pages)
+      - ${HOME}/.openclaw:/openclaw:ro
+
+      # Optional: mount gog config if you want Gmail/Google Tasks in the container
+      # - ${HOME}/.config/gog:/root/.config/gog:ro
+
+    restart: unless-stopped
+
+volumes:
+  mc-data:
