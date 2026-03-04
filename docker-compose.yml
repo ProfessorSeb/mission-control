@@ -14,6 +14,10 @@ services:
       MISSION_CONTROL_VAULT_DIR: "/vault"
       OPENCLAW_HOME: "/openclaw"
 
+      # Optional: auth gate (HTTP Basic Auth)
+      # MC_AUTH_USER: "admin"
+      # MC_AUTH_PASSWORD: "change-me"
+
       # Optional: for gog-based Gmail/Google Tasks features
       # GOG_ACCOUNT: "you@company.com"
 
