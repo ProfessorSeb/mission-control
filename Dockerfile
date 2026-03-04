@@ -51,5 +51,6 @@ COPY --from=builder /app/src/generated ./src/generated
 
 EXPOSE 3010
 
-# Run DB migrations on start (idempotent) then start Next
-CMD ["bash", "-lc", "npx prisma migrate deploy && npm run start"]
+# Run DB migrations on start (idempotent) then start Next.
+# We explicitly bind to 0.0.0.0 so Docker port-forwarding works.
+CMD ["sh", "-lc", "npx prisma migrate deploy && node_modules/.bin/next start -p ${PORT:-3010} -H 0.0.0.0"]
