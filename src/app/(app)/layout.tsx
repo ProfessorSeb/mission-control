@@ -25,6 +25,7 @@ export default function AppLayout({
           <NavLink href="/tasks" label="Tasks" />
           <NavLink href="/notes" label="Notes" />
           <NavLink href="/sketches" label="Sketches" />
+          <NavLink href="/openclaw" label="OpenClaw" />
           <NavLink href="/mail" label="Mail" />
           <NavLink href="/g-tasks" label="Google Tasks" />
           <NavLink href="/runs" label="Runs" />

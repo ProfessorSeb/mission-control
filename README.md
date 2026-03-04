@@ -13,9 +13,10 @@ Built with **Next.js App Router + Tailwind + Prisma (SQLite)**.
 - `/tasks` - Tasks list view (Linear-ish)
 - `/notes` — Markdown notes stored in the vault (Notion-ish, but files)
 - `/sketches` — Excalidraw sketches stored in the vault
-- `/mail` — Gmail watch rules (via `gog gmail search`) + one-click “create task”
-- `/g-tasks` — Google Tasks (via `gog tasks`) + import to board
-- Task detail page — push a Mission Control task into Google Tasks
+- `/openclaw` — edit OpenClaw workspace files (SOUL/HEARTBEAT/MEMORY/etc.)
+- `/mail` - Gmail watch rules (via `gog gmail search`) + one-click "create task"
+- `/g-tasks` - Google Tasks (via `gog tasks`) + import to board
+- Task detail page - push a Mission Control task into Google Tasks
 - `/runs` - parses OpenClaw session JSONL logs and finds `sessions_spawn` tool calls
 - `/sessions` - reads OpenClaw `sessions.json`
 
@@ -53,7 +54,7 @@ Open: http://localhost:3000 (redirects to `/board`).
 
 - `Cmd/Ctrl + K` - command palette
 - `C` - new task
-- `G` then `B/T/N/D/M/G/R/S` - go to Board / Tasks / Notes / Sketches / Mail / Google Tasks / Runs / Sessions
+- `G` then `B/T/N/D/O/M/G/R/S` - go to Board / Tasks / Notes / Sketches / OpenClaw / Mail / Google Tasks / Runs / Sessions
 
 ### SQLite driver
 

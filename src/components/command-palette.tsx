@@ -145,6 +145,13 @@ export function CommandPalette() {
                   <span className="text-xs text-zinc-500">G D</span>
                 </Command.Item>
                 <Command.Item
+                  onSelect={() => closeAnd(() => router.push("/openclaw"))}
+                  className="flex cursor-pointer items-center justify-between rounded-md px-2 py-2 text-sm text-zinc-200 aria-selected:bg-zinc-900"
+                >
+                  <span>OpenClaw workspace</span>
+                  <span className="text-xs text-zinc-500">G O</span>
+                </Command.Item>
+                <Command.Item
                   onSelect={() => closeAnd(() => router.push("/mail"))}
                   className="flex cursor-pointer items-center justify-between rounded-md px-2 py-2 text-sm text-zinc-200 aria-selected:bg-zinc-900"
                 >
